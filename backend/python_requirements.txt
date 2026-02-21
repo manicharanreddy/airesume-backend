@@ -1,0 +1,10 @@
+# NLP and ML libraries (for future Python integration)
+python-docx==1.2.0
+PyPDF2==3.0.1
+nltk==3.9.2
+scikit-learn==1.7.2
+pandas==2.3.3
+numpy==2.3.4
+spacy==3.8.7
+transformers==4.34.0
+torch==2.6.0

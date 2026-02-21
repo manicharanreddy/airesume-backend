@@ -2,16 +2,17 @@
   "name": "ai-career-frontend",
   "version": "0.1.0",
   "private": true,
+    "proxy": "http://localhost:5000",
   "dependencies": {
-    "axios": "^1.6.0",
+    "axios": "^1.7.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.9.4",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^7.12.0",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
