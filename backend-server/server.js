@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'AI Career Platform API',
-    version: '1.0.3',  // Updated version again
+    version: '1.0.4',  // Updated version again
     description: 'Backend API for AI-powered career platform',
     endpoints: {
       auth: {
@@ -26,11 +26,28 @@ app.get('/', (req, res) => {
         login: 'POST /api/auth/login',
         profile: 'GET /api/auth/profile'
       },
+      resume: {
+        upload: 'POST /api/resume/upload',
+        match: 'POST /api/resume/match',
+        simulate: 'POST /api/resume/simulate-career'
+      },
+      career: {
+        predictSkills: 'POST /api/trending/predict-skills',
+        checkBias: 'POST /api/career/check-bias',
+        generatePortfolio: 'POST /api/career/generate-portfolio',
+        predictInterviewQuestions: 'POST /api/career/predict-interview-questions'
+      },
       health: 'GET /health'
     },
     status: 'API is running successfully'
   });
 });
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/resume', resumeRoutes);
+app.use('/api/career', careerRoutes);
+app.use('/api/trending', trendingRoutes);
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://aiuser:Manicharan%4012@cluster0.7pa4of5.mongodb.net/ai-career-platform?retryWrites=true&w=majority';
@@ -39,6 +56,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'ai_career_platform_jwt_secret_2024
 mongoose.connect(MONGODB_URI)
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
+
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const resumeRoutes = require('./routes/resumeRoutes');
+const careerRoutes = require('./routes/careerRoutes');
+const trendingRoutes = require('./routes/trendingRoutes');
 
 // User Schema
 const userSchema = new mongoose.Schema({
