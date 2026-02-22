@@ -6,6 +6,12 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const resumeRoutes = require('./routes/resumeRoutes');
+const careerRoutes = require('./routes/careerRoutes');
+const trendingRoutes = require('./routes/trendingRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 10000;
 
@@ -62,12 +68,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'ai_career_platform_jwt_secret_2024
 mongoose.connect(MONGODB_URI)
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
-
-// Import routes
-const authRoutes = require('./routes/authRoutes');
-const resumeRoutes = require('./routes/resumeRoutes');
-const careerRoutes = require('./routes/careerRoutes');
-const trendingRoutes = require('./routes/trendingRoutes');
 
 // User Schema
 const userSchema = new mongoose.Schema({
