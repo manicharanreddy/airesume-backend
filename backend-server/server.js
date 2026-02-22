@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'AI Career Platform API',
-    version: '1.0.4',  // Updated version again
+    version: '1.0.5',  // Updated version again
     description: 'Backend API for AI-powered career platform',
     endpoints: {
       auth: {
@@ -39,7 +39,8 @@ app.get('/', (req, res) => {
       },
       health: 'GET /health'
     },
-    status: 'API is running successfully'
+    status: 'API is running successfully',
+    timestamp: new Date().toISOString()
   });
 });
 
