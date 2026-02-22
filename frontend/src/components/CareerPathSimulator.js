@@ -29,7 +29,7 @@ const CareerPathSimulator = ({ resumeSkills = [] }) => {
     if (roles.length > 0 && !desiredRole) {
       setDesiredRole(roles[0]);
     }
-  }, []);
+  }, [desiredRole]);
 
   // Update skills when resume skills change
   useEffect(() => {

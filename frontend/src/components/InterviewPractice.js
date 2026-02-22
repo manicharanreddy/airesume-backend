@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { predictInterviewQuestions } from '../services/api';
 import './InterviewPractice.css';
 
@@ -14,12 +14,25 @@ const InterviewPractice = ({ resumeData }) => {
   const [timer, setTimer] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
+  const fetchInterviewQuestions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await predictInterviewQuestions(resumeData);
+      setQuestions(response.data.questions || []);
+      setTotalScore(response.data.questions ? response.data.questions.length * 10 : 0);
+    } catch (error) {
+      console.error('Error fetching interview questions:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [resumeData]);
+
   // Fetch interview questions when resume data is available
   useEffect(() => {
     if (resumeData) {
       fetchInterviewQuestions();
     }
-  }, [resumeData]);
+  }, [resumeData, fetchInterviewQuestions]);
 
   // Timer effect
   useEffect(() => {
@@ -33,19 +46,6 @@ const InterviewPractice = ({ resumeData }) => {
     }
     return () => clearInterval(interval);
   }, [isActive, timer]);
-
-  const fetchInterviewQuestions = async () => {
-    setLoading(true);
-    try {
-      const response = await predictInterviewQuestions(resumeData);
-      setQuestions(response.data.questions || []);
-      setTotalScore(response.data.questions ? response.data.questions.length * 10 : 0);
-    } catch (error) {
-      console.error('Error fetching interview questions:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const startPractice = () => {
     if (questions.length > 0) {

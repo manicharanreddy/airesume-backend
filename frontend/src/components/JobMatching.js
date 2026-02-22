@@ -28,7 +28,7 @@ const JobMatching = ({ resumeSkills = [] }) => {
     if (jobs.length > 0 && !jobRole) {
       setJobRole(jobs[0]);
     }
-  }, []);
+  }, [jobRole]);
 
   const handleMatch = async (e) => {
     e.preventDefault();

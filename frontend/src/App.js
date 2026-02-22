@@ -21,6 +21,43 @@ function App() {
   const [resumeSkills, setResumeSkills] = useState([]);
   const [resumeData, setResumeData] = useState(null);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    console.log('App component mounted - checking auth');
+    // Check if user is logged in
+    const checkUserAuth = () => {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      console.log('Token:', token ? 'present' : 'missing');
+      console.log('User data:', userData ? 'present' : 'missing');
+      
+      if (token && userData) {
+        setUser(JSON.parse(userData));
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    };
+
+    // Check authentication on initial load
+    checkUserAuth();
+
+    // Listen for storage changes (e.g., when user logs in from another tab)
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        checkUserAuth();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   useEffect(() => {
     // Create floating background elements
@@ -39,37 +76,6 @@ function App() {
     return () => {
       const shapes = document.querySelectorAll('.floating-shape');
       shapes.forEach(shape => shape.remove());
-    };
-  }, []);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const checkUserAuth = () => {
-      const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
-      
-      if (token && userData) {
-        setUser(JSON.parse(userData));
-      } else {
-        setUser(null);
-      }
-    };
-
-    // Check authentication on initial load
-    checkUserAuth();
-
-    // Listen for storage changes (e.g., when user logs in from another tab)
-    const handleStorageChange = (e) => {
-      if (e.key === 'token' || e.key === 'user') {
-        checkUserAuth();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    // Cleanup event listener
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -95,6 +101,22 @@ function App() {
     setUser(userData);
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.5rem'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  console.log('Rendering App with user:', user);
   return (
     <div className="App">
       <ThemeToggle />

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/globals.css';
 import './Auth.css';
+import { registerUser } from '../services/api';
 
 const Register = ({ updateUser }) => {
   const [name, setName] = useState('');
@@ -21,24 +22,16 @@ const Register = ({ updateUser }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const response = await registerUser({ name, email, password });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.data) {
         // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        // Fix: Store user data correctly from the response
+        localStorage.setItem('token', response.data.token);
+        // Store user data correctly from the response
         const userData = {
-          _id: data._id,
-          name: data.name,
-          email: data.email
+          _id: response.data._id,
+          name: response.data.name,
+          email: response.data.email
         };
         localStorage.setItem('user', JSON.stringify(userData));
         
@@ -50,10 +43,11 @@ const Register = ({ updateUser }) => {
         // Redirect to dashboard
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Registration failed');
+        setError(response.data?.message || 'Registration failed');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
+      console.error('Registration error:', err);
     }
   };
 

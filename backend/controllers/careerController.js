@@ -1,16 +1,60 @@
-const { getTrendingSkills, predictFutureSkillsML } = require('../utils/python_bridge');
-
 // Predict future skills based on real-time trending data and ML
 const predictFutureSkills = async (req, res) => {
+  // Handle the case where res is passed as {res} from API route
+  const response = res.res ? res.res : res;
+  
   const { skills } = req.body;
   const skillsArray = skills.split(',').map(skill => skill.trim()).filter(skill => skill);
   
   try {
-    // Use ML model for future skills prediction
-    const mlPredictions = await predictFutureSkillsML(skillsArray);
+    // Try to use Python bridge if available, otherwise use fallback
+    let mlPredictions = [];
+    let trendingSkills = [];
     
-    // Get real-time trending skills data as fallback
-    const trendingSkills = await getTrendingSkills();
+    try {
+      const { getTrendingSkills, predictFutureSkillsML } = require('../utils/python_bridge');
+      // Use ML model for future skills prediction
+      mlPredictions = await predictFutureSkillsML(skillsArray);
+      
+      // Get real-time trending skills data
+      trendingSkills = await getTrendingSkills();
+    } catch (pythonError) {
+      console.warn('Python bridge unavailable for future skills prediction, using fallback:', pythonError.message);
+      // Fallback to mock data if Python bridge fails
+      mlPredictions = [];
+      trendingSkills = [
+        {
+          skill: 'Artificial Intelligence',
+          trend: 'rapidly increasing',
+          growth_rate: 42.3,
+          description: 'AI skills continue to be in high demand across all industries.'
+        },
+        {
+          skill: 'Cloud Computing',
+          trend: 'rapidly increasing',
+          growth_rate: 38.7,
+          description: 'Cloud infrastructure and management skills remain critical.'
+        },
+        {
+          skill: 'Cybersecurity',
+          trend: 'steadily increasing',
+          growth_rate: 31.5,
+          description: 'With increasing digital threats, cybersecurity expertise is essential.'
+        },
+        {
+          skill: 'Data Science',
+          trend: 'rapidly increasing',
+          growth_rate: 29.8,
+          description: 'Ability to analyze and interpret data remains highly valuable.'
+        },
+        {
+          skill: 'DevOps',
+          trend: 'steadily increasing',
+          growth_rate: 27.2,
+          description: 'Integration of development and operations continues to grow in importance.'
+        }
+      ];
+    }
     
     // Combine ML predictions with trending skills
     let finalPredictions = [];
@@ -31,7 +75,7 @@ const predictFutureSkills = async (req, res) => {
       predictions: finalPredictions
     };
     
-    res.json(result);
+    response.json(result);
   } catch (error) {
     console.error('Future skills prediction error:', error);
     // Fallback to mock data if real-time data fails
@@ -56,7 +100,7 @@ const predictFutureSkills = async (req, res) => {
       }
     ];
     
-    res.json({
+    response.json({
       currentSkills: skillsArray,
       predictions: fallbackPredictions
     });
@@ -65,6 +109,9 @@ const predictFutureSkills = async (req, res) => {
 
 // Check for bias in resume text using NLP
 const checkBias = (req, res) => {
+  // Handle the case where res is passed as {res} from API route
+  const response = res.res ? res.res : res;
+  
   const { resumeText } = req.body;
   const wordCount = resumeText.split(/\s+/).length;
   
@@ -137,11 +184,14 @@ const checkBias = (req, res) => {
     correctedText: correctedText
   };
   
-  res.json(result);
+  response.json(result);
 };
 
 // Generate portfolio from resume data using AI
 const generatePortfolio = (req, res) => {
+  // Handle the case where res is passed as {res} from API route
+  const response = res.res ? res.res : res;
+  
   const { name, email, phone, skills, experience, education, projects } = req.body;
   const skillsArray = skills.split(',').map(skill => skill.trim()).filter(skill => skill);
   
@@ -298,24 +348,88 @@ const generatePortfolio = (req, res) => {
     note: "This is a demo portfolio URL. In a production environment, this would link to an actual generated portfolio website."
   };
   
-  res.json(result);
+  response.json(result);
 };
 
 // Predict interview questions based on resume data
 const predictInterviewQuestions = async (req, res) => {
+  // Handle the case where res is passed as {res} from API route
+  const response = res.res ? res.res : res;
+  
   try {
     const resumeData = req.body;
     
-    // Call Python script to predict interview questions
-    const { predictInterviewQuestions } = require('../utils/python_bridge');
-    const questions = await predictInterviewQuestions(resumeData);
+    // Try to use Python bridge if available, otherwise use fallback
+    let questions;
+    try {
+      const { predictInterviewQuestions } = require('../utils/python_bridge');
+      // Call Python script to predict interview questions
+      questions = await predictInterviewQuestions(resumeData);
+    } catch (pythonError) {
+      console.warn('Python bridge unavailable for interview questions, using fallback:', pythonError.message);
+      // Fallback: Generate mock interview questions based on skills
+      const skills = resumeData.skills || [];
+      const skillsArray = Array.isArray(skills) ? skills : skills.split(',');
+      
+      // Sample interview questions based on common skills
+      const skillBasedQuestions = {
+        'javascript': [
+          'Explain the difference between let, const, and var.',
+          'What are closures in JavaScript?',
+          'How does the event loop work in JavaScript?'
+        ],
+        'react': [
+          'What are React hooks and how do they work?',
+          'Explain the virtual DOM concept.',
+          'How do you optimize React component performance?'
+        ],
+        'python': [
+          'What are Python decorators?',
+          'Explain the difference between lists and tuples.',
+          'What is the Global Interpreter Lock (GIL)?'
+        ],
+        'node.js': [
+          'How does Node.js handle asynchronous operations?',
+          'What are streams in Node.js?',
+          'Explain the event-driven architecture in Node.js.'
+        ],
+        'database': [
+          'What is the difference between SQL and NoSQL databases?',
+          'Explain ACID properties in database transactions.',
+          'What are database indexes and how do they work?'
+        ]
+      };
+      
+      // Generate questions based on provided skills
+      questions = [];
+      skillsArray.forEach(skill => {
+        const skillKey = skill.toLowerCase().trim();
+        if (skillBasedQuestions[skillKey]) {
+          questions = questions.concat(skillBasedQuestions[skillKey]);
+        }
+      });
+      
+      // Add some general questions if no skill-specific ones were found
+      if (questions.length === 0) {
+        questions = [
+          'Tell us about yourself and your background.',
+          'Why are you interested in this position?',
+          'What are your strengths and weaknesses?',
+          'Describe a challenging project you worked on.',
+          'How do you stay updated with the latest technology trends?'
+        ];
+      }
+      
+      // Limit to 10 questions max
+      questions = questions.slice(0, 10);
+    }
     
-    res.json({
+    response.json({
       questions: questions
     });
   } catch (error) {
     console.error('Interview question prediction error:', error);
-    res.status(500).json({ error: 'Failed to predict interview questions: ' + error.message });
+    response.status(500).json({ error: 'Failed to predict interview questions: ' + error.message });
   }
 };
 

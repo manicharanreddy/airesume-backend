@@ -1,18 +1,11 @@
 {
-    "python.defaultInterpreterPath": "c:/Users/rachu/Downloads/AI resume2/ai-career-platform/backend/ai_career_env/Scripts/python.exe",
-    "python.terminal.activateEnvironment": true,
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "pyright.disableLanguageServices": false,
-    "pyright.disableOrganizeImports": false,
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": false,
-    "python.linting.pyrightEnabled": true,
-    "python.analysis.autoSearchPaths": true,
-    "python.analysis.extraPaths": [
-        "c:/Users/rachu/Downloads/AI resume2/ai-career-platform/backend",
-        "c:/Users/rachu/Downloads/AI resume2/ai-career-platform/backend/ai_career_env/Lib/site-packages"
-    ],
-    "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.diagnosticMode": "workspace"
+  // Disable JSON schema validation completely
+  "json.schemaDownload.enable": false,
+  "json.validate.enable": false,
+  "json.schemas": [],
+  
+  // Additional settings to prevent schema-related issues
+  "files.associations": {
+    "*.json": "json"
+  }
 }

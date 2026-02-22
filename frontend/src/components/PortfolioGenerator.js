@@ -264,8 +264,7 @@ const PortfolioGenerator = ({ resumeData: propResumeData }) => {
                     Copy
                   </button>
                 </div>
-                <a 
-                  href="#" 
+                <button 
                   className="view-portfolio-button"
                   onClick={(e) => {
                     e.preventDefault();
@@ -273,7 +272,7 @@ const PortfolioGenerator = ({ resumeData: propResumeData }) => {
                   }}
                 >
                   👁️ View Portfolio
-                </a>
+                </button>
               </div>
             </div>
           </div>
