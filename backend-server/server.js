@@ -196,7 +196,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'AI Career Platform API',
-    version: '1.0.0',
+    version: '1.0.1',  // Updated version
     description: 'Backend API for AI-powered career platform',
     endpoints: {
       auth: {
