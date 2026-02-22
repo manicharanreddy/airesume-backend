@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "dockerfile"
+  },
+  "deploy": {
+    "startCommand": "serve -s build -l 3000",
+    "restartPolicyMaxRetries": 10,
+    "restartPolicyWindow": 60
+  }
+}
