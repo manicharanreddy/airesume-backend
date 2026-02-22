@@ -14,6 +14,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root route - API information (placed early to avoid conflicts)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'AI Career Platform API',
+    version: '1.0.3',  // Updated version again
+    description: 'Backend API for AI-powered career platform',
+    endpoints: {
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        profile: 'GET /api/auth/profile'
+      },
+      health: 'GET /health'
+    },
+    status: 'API is running successfully'
+  });
+});
+
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://aiuser:Manicharan%4012@cluster0.7pa4of5.mongodb.net/ai-career-platform?retryWrites=true&w=majority';
 const JWT_SECRET = process.env.JWT_SECRET || 'ai_career_platform_jwt_secret_2024_secure_key';
@@ -191,24 +209,6 @@ app.get('/api/auth/profile', async (req, res) => {
 
 // Serve static files for production (if needed)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Root route - API information
-app.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'AI Career Platform API',
-    version: '1.0.2',  // Updated version again
-    description: 'Backend API for AI-powered career platform',
-    endpoints: {
-      auth: {
-        register: 'POST /api/auth/register',
-        login: 'POST /api/auth/login',
-        profile: 'GET /api/auth/profile'
-      },
-      health: 'GET /health'
-    },
-    status: 'API is running successfully'
-  });
-});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
